@@ -25,6 +25,6 @@ export default function MarkdownEditor() {
 // 添加一个固定的延迟时间，以便你可以看到加载状态
 function delayForDemo (promise) {
   return new Promise((resolve) => {
-    setTimeout(resolve, 200)
+    setTimeout(resolve, 2000)
   }).then(() => promise)
 }

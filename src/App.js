@@ -1,39 +1,30 @@
-import React, { Component, useRef } from 'react'
+import { useState, lazy, Suspense } from 'react';
+import Loading from './Loading';
 
-// useRef写法
-function App() {
-  // 使用ref实现计数，react不会重新渲染组件
-  let countRef = useRef(0);
-
-  function handleClick() {
-    countRef.current = countRef.current + 1;
-  };
-
+export default function MarkdownEditor() {
+  const [ markdown, setMarkdown ] = useState('hello markdown');
+  const [ showMarkdown, setShowMarkdown ] = useState(false);
+  const LazyMarkdown = lazy(() => delayForDemo(import('./MarkdownPreview')));
   return (
-    <div>
-      <button onClick={handleClick}>you click {countRef.current} times</button>
-    </div>
+    <>
+      <textarea value={markdown} onChange={(e) => setMarkdown(e.target.value)} />
+      <br/>
+      <label>
+        <input type='checkbox' onChange={(e) => setShowMarkdown(e.target.checked)} />
+        Show Preview
+      </label>
+      <hr/>
+      {showMarkdown && <Suspense fallback={<Loading />}>
+        <h2>Preview</h2>
+        <LazyMarkdown markdown={markdown} />
+      </Suspense>}
+    </>
   )
 }
 
-// class函数写法
-class Apps extends Component {
-
-  constructor(props) {
-    super(props)
-    this.countRef = React.createRef(0);
-  }
-  handleClick = () => {
-    this.countRef.current = this.countRef.current + 1;
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick}>you click {this.countRef.current} time</button>
-    )
-  }
+// 添加一个固定的延迟时间，以便你可以看到加载状态
+function delayForDemo (promise) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 200)
+  }).then(() => promise)
 }
-
-
-
-export { App, Apps }
